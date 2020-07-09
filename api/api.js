@@ -1,8 +1,15 @@
 const router = require('express').Router();
+const {run} = require('../code-engine/engine');
 
-router.post('/run', (req, res) => {
+router.post('/run', async (req, res) => {
     const code = req.body.code;
-    res.status(200).send('Code Submitted');
+    const fid = Math.floor(Math.random() * 1000);
+    try {
+        const op = await run(fid, code);
+        res.send(op);   
+    } catch (error) {
+        res.send(error);
+    }
 });
 
 module.exports = router;

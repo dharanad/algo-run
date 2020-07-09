@@ -18,10 +18,8 @@ class Executor {
         `g++ ${this.sourcepath} -std=c++17 -o ${binaryPath}`,
         (err, stdout, stderr) => {
           if (err) {
-            // console.error(stderr);
             reject(stderr);
           }
-          // console.log(`File Complied`);
           resolve(binaryPath);
         }
       );

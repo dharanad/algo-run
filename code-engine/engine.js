@@ -1,16 +1,12 @@
 const FileHandler = require("./fileHandler");
 const Executor = require("./executor");
-const { response } = require("express");
-
-const tempPath = "../temp/";
-const srcPath = tempPath + "src";
-const binPath = tempPath + "bin";
+const { tempSrcPath, tempBinPath } = require("./utils");
 
 const run = (fid, sourceCode) =>
   new Promise((resolve, reject) => {
-    let fh = new FileHandler(fid, "cpp", srcPath, sourceCode);
+    let fh = new FileHandler(fid, "cpp", tempSrcPath, sourceCode);
     fh.createSourceFile().then((filePath) => {
-      let executor = new Executor(fid, filePath, binPath);
+      let executor = new Executor(fid, filePath, tempBinPath);
       executor
         .compile()
         .then(() => {
@@ -23,13 +19,10 @@ const run = (fid, sourceCode) =>
           reject(reason);
         })
         .finally(() => {
-            //TODO: Delete the binary file
+          //TODO: Delete the binary file
           fh.deleteFile();
         });
     });
   });
 
-let fid = "154";
-let sc =
-  "#include<iostream>\nusing namespace std;\nint main(){\ncout<<1+2;\nreturn 0;\n}\n";
-run(fid, sc).then((data) => console.log(data));
+exports.run = run;
