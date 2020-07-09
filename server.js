@@ -4,15 +4,20 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
 
-const port = process.env.PORT || 8080;
+const api = require('./api/api');
+
+const port = process.env.PORT || 3000;
+
 app.use(cors()); // Same origin policy Enabled
 app.use(bodyParser.urlencoded({extended : false}));
 app.use(bodyParser.json())
 app.disable('x-powered-by');
 
 // Serving React App
-app.use(express.static(path.join(__dirname,'build')));
+app.use(express.static(path.join(__dirname, 'client','build')));
 
+// Route to /api
+app.use('/api', api);
 
 /* Middleware */
 app.use((req, res) => {
