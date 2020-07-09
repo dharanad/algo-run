@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { Controlled as CodeMirror } from "react-codemirror2";
-import axios from "axios";
 import Selector from "../Selector/Selector";
+import { Button, Container, Row, Col } from "reactstrap";
+import axios from "axios";
 import "./editor.css";
 import "codemirror/mode/clike/clike";
 import "codemirror/keymap/sublime";
@@ -21,7 +22,7 @@ class Editor extends Component {
 
   constructor(props) {
     super(props);
-    
+
     this.state = {
       options: {
         mode: "text/x-c++src",
@@ -32,26 +33,35 @@ class Editor extends Component {
         theme: "eclipse",
       },
       code: "# Write your code here",
+      isSubmitDisabled : false
     };
   }
 
   onSubmit = async () => {
-    alert('Code Submitted') //FIXME: Notify users properly
+    let isSubmitDisabled = !this.state.isSubmitDisabled;
+    this.setState({isSubmitDisabled});
     try {
-      const {data, status} = await axios.post('/api/run', { code: this.state.code });
-      console.log(data);
+      const { data, status } = await axios.post("/api/run", {
+        code: this.state.code,
+      });
+
+      this.props.handleOutput(data, false);
     } catch (error) {
-      console.error(error);
+      const status = error.response.status;
+      if(status === 200){
+        this.props.handleOutput(error, true);
+      }
+      //FIXME: Handle Network Errors with toast
     }
+    isSubmitDisabled = !this.state.isSubmitDisabled;
+    this.setState({isSubmitDisabled});
   };
 
   onBeforeChange = (editor, data, value) => {
-    this.setState({ code : value });
+    this.setState({ code: value });
   };
 
-  onChange = (editor, data, value) => {
-
-  };
+  onChange = (editor, data, value) => {};
 
   onSelectChange = (event) => {
     const theme = event.target.value;
@@ -67,24 +77,37 @@ class Editor extends Component {
 
   render() {
     return (
-      <div style={{ margin: "2%" }}>
-        <Selector list={this.themes} onChange={this.onSelectChange}>
-          Theme
-        </Selector>
-        <Selector list={this.keyMaps} onChange={this.onKeyMapChange}>
-          Keymap
-        </Selector>
-        <div style={{ border: "double", width: "60%" }}>
-          <CodeMirror
-            value={this.state.code}
-            options={{ ...this.state.options }}
-            onBeforeChange={this.onBeforeChange}
-            onChange={this.onChange}
-          />
-        </div>
-        <p></p>
-        <button onClick={() => this.onSubmit()}>Submit</button>
-      </div>
+      <Container>
+        <Row noGutters>
+          <Col>
+            <Selector list={this.themes} onChange={this.onSelectChange}>
+              Theme
+            </Selector>
+          </Col>
+          <Col>
+            <Selector list={this.keyMaps} onChange={this.onKeyMapChange}>
+              Keymap
+            </Selector>
+          </Col>
+        </Row>
+        <Row noGutters className="mb-2">
+          <Col className="border border-primary">
+            <CodeMirror
+              value={this.state.code}
+              options={{ ...this.state.options }}
+              onBeforeChange={this.onBeforeChange}
+              onChange={this.onChange}
+            />
+          </Col>
+        </Row>
+        <Row noGutters>
+          <Col>
+            <Button onClick={() => this.onSubmit()} disabled={this.state.isSubmitDisabled} color="success">
+              Submit
+            </Button>
+          </Col>
+        </Row>
+      </Container>
     );
   }
 }

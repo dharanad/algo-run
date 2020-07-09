@@ -1,11 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Editor from './Editor/Editor';
+import App from "./App/App";
 
 ReactDOM.render(
-  <div>
-      <h2>Code Editor</h2>
-      <Editor/>
-  </div>,
+  <React.Fragment>
+    <App />
+  </React.Fragment>,
   document.getElementById("root")
 );
