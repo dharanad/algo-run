@@ -2,27 +2,23 @@ const FileHandler = require("./fileHandler");
 const Executor = require("./executor");
 const { tempSrcPath, tempBinPath } = require("./utils");
 
-const run = (fid, sourceCode) =>
-  new Promise((resolve, reject) => {
-    let fh = new FileHandler(fid, "cpp", tempSrcPath, sourceCode);
-    fh.createSourceFile().then((filePath) => {
-      let executor = new Executor(fid, filePath, tempBinPath);
-      executor
-        .compile()
-        .then(() => {
-          return executor.run();
-        })
-        .then((data) => {
-          resolve(data);
-        })
-        .catch((reason) => {
-          reject(reason);
-        })
-        .finally(() => {
-          //TODO: Delete the binary file
-          fh.deleteFile();
-        });
-    });
+const run = (fid, sourceCode) => {
+  let fh = new FileHandler(fid, "cpp", tempSrcPath, sourceCode);
+  return new Promise(async (resolve, reject) => {
+    try {
+      let sourceFilePath = await fh.createSourceFile();
+      let excutor = new Executor(fid, sourceFilePath, tempBinPath);
+      let { binFilePath } = await excutor.compile();
+      fh.binFilePath = binFilePath;
+      let runProgramStatus = await excutor.run();
+      resolve(runProgramStatus);
+    } catch (error) {
+      reject(error);
+    } finally {
+      fh.deleteFile();
+      fh.deleteBinFile();
+    }
   });
+};
 
 exports.run = run;
