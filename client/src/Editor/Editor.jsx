@@ -37,9 +37,8 @@ class Editor extends Component {
 
   onSubmit = async () => {
     alert('Code Submitted') //FIXME: Notify users properly
-    const api = `http://localhost:8080/run`;
     try {
-      const data = await axios.post(api, { code: this.state.code });
+      const {data, status} = await axios.post('/api/run', { code: this.state.code });
       console.log(data);
     } catch (error) {
       console.error(error);
