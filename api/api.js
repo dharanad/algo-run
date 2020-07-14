@@ -3,7 +3,7 @@ const {run} = require('../code-engine/engine');
 
 router.post('/run', async (req, res) => {
     const code = req.body.code;
-    const fid = new Date().getUTCMilliseconds(); //FIXME: Make changes
+    const fid = new Date().getUTCMilliseconds() / 1000; //FIXME: Make changes
     try {
         const op = await run(fid, code);
         res.send(op);   

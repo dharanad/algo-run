@@ -46,12 +46,11 @@ class Editor extends Component {
       });
 
       this.props.handleOutput(data, false);
-    } catch (error) {
+    } catch (error) { //FIXME: Catch all the network errors
       const status = error.response.status;
       if(status === 200){
         this.props.handleOutput(error, true);
       }
-      //FIXME: Handle Network Errors with toast
     }
     isSubmitDisabled = !this.state.isSubmitDisabled;
     this.setState({isSubmitDisabled});
