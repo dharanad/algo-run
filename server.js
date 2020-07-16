@@ -2,18 +2,19 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const helmet = require('helmet');
-const morgon = require('morgan');
+const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const path = require('path');
 const port = process.env.PORT || 3000;
 const api = require('./api/api');
 
-api.use(morgon('combined'));
+app.use(morgan('combined'))
 app.use(helmet());
 app.use(cors()); // Same origin policy Enabled
 app.use(bodyParser.urlencoded({extended : false}));
 app.use(bodyParser.json())
 app.disable('x-powered-by');
+
 
 // Serving React App
 app.use(express.static(path.join(__dirname, 'client','build')));
