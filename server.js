@@ -8,7 +8,7 @@ const path = require('path');
 const port = process.env.PORT || 3000;
 const api = require('./api/api');
 
-app.use(morgan('combined'))
+app.use(morgan('tiny'))
 app.use(helmet());
 app.use(cors()); // Same origin policy Enabled
 app.use(bodyParser.urlencoded({extended : false}));
