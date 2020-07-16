@@ -17,13 +17,18 @@ class FileHanlder {
     this.dir = dir;
     this.sourceCode = sourceCode;
   }
+  /**
+   * @param {string} path
+   */
+  set binFilePath(path){
+    this._binFilePath = path;
+  }
 
   createSourceFile = () =>
     new Promise((resolve, reject) => {
       const filePath = `${this.dir}/${this.fid}.${this.ext}`;
       fs.writeFile(filePath, this.sourceCode, (err) => {
         if (err) {
-          // console.error(err);
           reject(err);
         }
         this.filePath = filePath;
@@ -42,6 +47,16 @@ class FileHanlder {
           reject(err);
         }
         this.isCreated = false;
+        resolve(`Deleted file at location : ${this.filePath}`);
+      });
+    });
+
+  deleteBinFile = () =>
+    new Promise((resolve, reject) => {
+      fs.unlink(this._binFilePath, (err) => {
+        if (err) {
+          reject(err);
+        }
         resolve(`Deleted file at location : ${this.filePath}`);
       });
     });
