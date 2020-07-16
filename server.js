@@ -1,13 +1,15 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const helmet = require('helmet');
+const morgon = require('morgan');
 const bodyParser = require('body-parser');
 const path = require('path');
-
+const port = process.env.PORT || 3000;
 const api = require('./api/api');
 
-const port = process.env.PORT || 3000;
-
+api.use(morgon('combined'));
+app.use(helmet());
 app.use(cors()); // Same origin policy Enabled
 app.use(bodyParser.urlencoded({extended : false}));
 app.use(bodyParser.json())
@@ -36,5 +38,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(port, () => {
-    console.log(`Listening on PORT : ${port}`);
+    console.log(`Server running on PORT : ${port}`);
 });
